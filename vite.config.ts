@@ -1,7 +1,7 @@
 import { defineConfig } from 'vitest/config'
 import viteReact from '@vitejs/plugin-react'
 import tailwindcss from '@tailwindcss/vite'
-
+import path from 'path'
 import { tanstackRouter  } from '@tanstack/router-plugin/vite'
 
 
@@ -18,7 +18,7 @@ export default defineConfig({
   },
   resolve: {
     alias: {
-      '@': "./src",
+      '@': path.resolve(__dirname, "./src"),
     },
   },
 })

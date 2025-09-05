@@ -1,5 +1,5 @@
 import { createFileRoute } from '@tanstack/react-router'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { supabase } from "@/lib/supabase";
 
 type RecordType = {
@@ -16,6 +16,8 @@ function App() {
   const [title, setTitle] = useState("")
   const [time, setTime] = useState(0)
 
+  const [loading, setLoading] = useState<boolean>(false);
+
   // レコードの状態管理
   const [records, setRecords] = useState<RecordType[]>([]);
 
@@ -23,6 +25,20 @@ function App() {
   const sum = records.reduce((accumulator, currentValue) => {
     return accumulator + currentValue.time;
   }, 0);
+
+  const getRecords = async() => {
+    try {
+      const { data, error } = await supabase
+        .from("study_record")
+        .select("title, time")
+        .order("created_at", {ascending  :false})
+        .limit(3);
+      if (error) throw error;
+      return data;
+    } catch (error) {
+      return [];
+    }
+  }
 
   // レコードに学習記録を追加する
   const onSubmit = () => {
@@ -39,6 +55,17 @@ function App() {
     setTime(0);
   }
 
+  useEffect(() => {
+    const fetchRecords = async () => {
+      setLoading(true);
+      const data = await getRecords();
+      setRecords(data);
+      setLoading(false);
+    };
+    
+    fetchRecords();
+  }, []);
+
   return (
     <div className="bg-gray-100 min-h-svh flex flex-col items-center justify-center p-6">
       <div className="w-full max-w-sm md:max-w-3xl">
@@ -48,7 +75,15 @@ function App() {
         </div>
 
         {/* 記録一覧部分 */}
-        <div className="mt-6 space-y-3 bg-white border rounded-lg p-4">
+        {loading ? (
+          <div className='mt-6 space-y-3 bg-white border rounded-lg p-4'>
+            <div className="flex items-center justify-center py-8">
+              <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-bulue-600 mr-3"></div>
+              <span className='text-gray-600'>読込中...</span>
+            </div>
+          </div>
+        ) : (
+          <div className="mt-6 space-y-3 bg-white border rounded-lg p-4">
           {records.length === 0 ? (
             <div className="text-gray-500 text-center">まだ学習記録がありません</div>
           ) : (
@@ -60,7 +95,7 @@ function App() {
             ))
           )}
         </div>
-Bell250708
+        )}
         {/* form 部分 */}
         <div className="mt-6 bg-white border rounded-lg p-6">
 

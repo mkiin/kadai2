@@ -20,6 +20,8 @@
     "noUnusedParameters": true,
     "noFallthroughCasesInSwitch": true,
     "noUncheckedSideEffectImports": true,
+
+    // パスマッピングの追加
     "baseUrl": ".",
     "paths": {
       "@/*": ["./src/*"],
