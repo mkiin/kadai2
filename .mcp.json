@@ -1,0 +1,25 @@
+{
+  "mcpServers": {
+    "serena": {
+      "command": "uvx",
+      "args": [
+        "--from",
+        "git+https://github.com/oraios/serena",
+        "serena",
+        "start-mcp-server",
+        "--context",
+        "ide-assistant",
+        "--project",
+        "."
+      ],
+      "cwd": "."
+    },
+    "create-tsrouter-app": {
+      "command": "pnpx",
+      "args ": [
+        "create-tsrouter-app@latest",
+        "--mcp"
+      ]
+    }
+  }
+}
