@@ -1,5 +1,6 @@
 import { createFileRoute } from '@tanstack/react-router'
 import { useState } from 'react'
+import { supabase } from "@/lib/supabase";
 
 type RecordType = {
   title: string
@@ -38,10 +39,6 @@ function App() {
     setTime(0);
   }
 
-  const onClickHandler = () => {
-    alert();
-  }
-
   return (
     <div className="bg-gray-100 min-h-svh flex flex-col items-center justify-center p-6">
       <div className="w-full max-w-sm md:max-w-3xl">
@@ -49,7 +46,6 @@ function App() {
         <div className="">
           <h1 className="text-3xl font-bold mb-6 text-gray-900">学習記録一覧</h1>
         </div>
-        <button onClick={onClickHandler}>ボタン</button>
 
         {/* 記録一覧部分 */}
         <div className="mt-6 space-y-3 bg-white border rounded-lg p-4">
@@ -64,7 +60,7 @@ function App() {
             ))
           )}
         </div>
-
+Bell250708
         {/* form 部分 */}
         <div className="mt-6 bg-white border rounded-lg p-6">
 
