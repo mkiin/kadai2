@@ -1,20 +1,24 @@
 import { supabase } from "@/lib/supabase";
-import type { Tables as TableType, TablesInsert as TablesInsertType } from "@/types/database.types";
+import type { TablesInsert as TablesInsertType } from "@/types/database.types";
+import { PostgrestError } from "@supabase/supabase-js";
 
-type RecordType = TableType<"study_record">
 type InsertRecordType = TablesInsertType<"study_record">
+
 
 export const getRecords = async() => {
   try {
     const { data, error } = await supabase
       .from("study_record")
-      .select("id, title, time")
+      .select("id, title, time, created_at")
       .order("created_at", {ascending  :false})
-      .limit(3);
     if (error) throw error;
     return data;
   } catch (error) {
-    return [];
+    if (error instanceof PostgrestError) {
+      return error.message;
+    } else {
+      return "エラーが発生しました"
+    }
   }
 }
 
@@ -28,10 +32,13 @@ export const createRecords = async (record : InsertRecordType) => {
        })
        .select()
        if (error) throw error;
-       return data;
+       return data[0];
     } catch (error) {
-      console.error(error);
-      return [];
+      if (error instanceof PostgrestError) {
+        return error.message;
+      } else {
+        return "エラーが発生しました"
+      }
     }
 }
 
@@ -39,15 +46,20 @@ export const createRecords = async (record : InsertRecordType) => {
  * ボタンを押す 
  */
 
-export const deleteRecords = async (RecordId : Pick<RecordType, "id"> ) => {
+export const deleteRecords = async (RecordId :string ) => {
   try {
-    const { error } = await supabase
+    const { data, error } = await supabase
       .from("study_record")
       .delete()
-      .eq("id", RecordId.id)
+      .eq("id", RecordId)
+      .select()
     if (error) throw error
+    return data[0];
   } catch (error) {
-    console.error(error);
-    return [];
+    if (error instanceof PostgrestError) {
+      return error.message;
+    } else {
+      return "エラーが発生しました"
+    }
   }
 }

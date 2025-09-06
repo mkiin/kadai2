@@ -1,11 +1,9 @@
 import { createFileRoute } from '@tanstack/react-router'
 import { useEffect, useState } from 'react'
-import { supabase } from "@/lib/supabase";
+import type { Tables } from "@/types/database.types";
+import { createRecords, deleteRecords, getRecords } from './querys';
 
-type RecordType = {
-  title: string
-  time: number,
-}
+type RecordType = Tables<"study_record">;
 
 export const Route = createFileRoute('/')({
   component: App,
@@ -13,58 +11,70 @@ export const Route = createFileRoute('/')({
 
 function App() {
   // フォームの状態管理
-  const [title, setTitle] = useState("")
-  const [time, setTime] = useState(0)
-
-  const [loading, setLoading] = useState<boolean>(false);
-
+  const [formData, setFormData] = useState({title : "", time : 0});
   // レコードの状態管理
   const [records, setRecords] = useState<RecordType[]>([]);
+  const [loading, setLoading] = useState<{fetch : boolean; submit: boolean}>({fetch : false, submit : false});
+  // エラー状態の管理
+  const [error , setError] = useState<string>("");
+
 
   // 学習時間の合計値
   const sum = records.reduce((accumulator, currentValue) => {
     return accumulator + currentValue.time;
   }, 0);
 
-  const getRecords = async() => {
-    try {
-      const { data, error } = await supabase
-        .from("study_record")
-        .select("title, time")
-        .order("created_at", {ascending  :false})
-        .limit(3);
-      if (error) throw error;
-      return data;
-    } catch (error) {
-      return [];
+  // レコードに学習記録を追加する
+  const onCreate = async () => {
+
+    if (formData.title === "" || formData.time <= 0) { return }
+
+    setLoading(prev => ({...prev, submit : true}));
+
+    
+    const result = await createRecords(formData);
+
+    if (typeof result !== "string") {
+      setRecords(prev => [result, ...prev]);
+      setFormData({title : "", time : 0});
+    } else {
+      setError(result);
     }
+    setLoading(prev => ({...prev, submit : false}))
+    return
   }
 
-  // レコードに学習記録を追加する
-  const onSubmit = () => {
+  // 学習記録を削除
+  const onDelete = async(id : string) => {
+    if (!id) { return };
+    setLoading(prev => ({...prev, submit : true}));
 
-    if (title === "" || time <= 0) { return }
+    const result = await deleteRecords(id);
 
-    const newRecord: RecordType = {
-      title,
-      time
+    if (typeof result !== "string") {
+      const newRecords = records.filter(record => record.id !== result.id);
+      setRecords(newRecords);
+    } else {
+      setError(result);
     }
-
-    setRecords(prev => [...prev, newRecord]);
-    setTitle("");
-    setTime(0);
+    setLoading(prev => ({...prev, submit : false}));
+    return;
   }
 
   useEffect(() => {
     const fetchRecords = async () => {
-      setLoading(true);
-      const data = await getRecords();
-      setRecords(data);
-      setLoading(false);
-    };
-    
+      setLoading(prev => ({...prev, fetch : true}));
+
+      const result = await getRecords();
+      if (typeof result !== "string") {
+        setRecords(result);
+      } else {
+        setError(result);
+      }
+      setLoading(prev => ({...prev, fetch : false}));
+    }
     fetchRecords();
-  }, []);
+  },[])
 
   return (
     <div className="bg-gray-100 min-h-svh flex flex-col items-center justify-center p-6">
@@ -75,7 +85,7 @@ function App() {
         </div>
 
         {/* 記録一覧部分 */}
-        {loading ? (
+        {loading.fetch ? (
           <div className='mt-6 space-y-3 bg-white border rounded-lg p-4'>
             <div className="flex items-center justify-center py-8">
               <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-bulue-600 mr-3"></div>
@@ -88,9 +98,10 @@ function App() {
             <div className="text-gray-500 text-center">まだ学習記録がありません</div>
           ) : (
             records.map((record) => (
-              <div key={`${record.title}-${record.time}`} className="">
+              <div key={`${record.title}-${record.time}`} className="flex items-center space-x-1.5">
                 <h3 className="font-medium">{record.title}</h3>
                 <p className="text-gray-600">{record.time}時間</p>
+                <button type="submit" className='bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700' onClick={() => onDelete(record.id)} disabled={loading.submit} >削除</button>
               </div>
             ))
           )}
@@ -107,8 +118,11 @@ function App() {
             <input
               type="text"
               className="border rounded px-3 py-1 w-full"
-              value={title}
-              onChange={(e) => setTitle(e.target.value)}
+              value={formData.title}
+              onChange={(e) => setFormData(prev => ({
+                ...prev,
+                title : e.target.value
+              }))}
             />
           </div>
 
@@ -120,25 +134,32 @@ function App() {
             <input
               type="number"
               className="border rounded px-3 py-1 w-full"
-              value={time}
-              onChange={(e) => setTime(Number(e.target.value))}
+              value={formData.time}
+              onChange={(e) => setFormData(prev => ({
+                ...prev,
+                time : parseInt(e.target.value)
+              }))}
             />
           </div>
 
           {/* 入力値の確認表示 */}
           <div className="bg-gray-50 p-3 rounded text-sm mb-4">
-            現在の入力: 学習内容「{title}」、時間「{time}」、合計時間「{sum}」
+            現在の入力: 学習内容「{formData.title}」、時間「{formData.time}」、合計時間「{sum}」
           </div>
 
           {/* 登録ボタン */}
           <button
-            onClick={onSubmit}
+            onClick={onCreate}
             type="submit"
             className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 w-full"
+            disabled={loading.submit}
           >
             登録
           </button>
         </div>
+        {error ? (
+          <div className="">{error}</div>
+        ) : null}
       </div>
     </div>
   );
