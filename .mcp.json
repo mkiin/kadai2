@@ -13,13 +13,6 @@
         "."
       ],
       "cwd": "."
-    },
-    "create-tsrouter-app": {
-      "command": "pnpx",
-      "args ": [
-        "create-tsrouter-app@latest",
-        "--mcp"
-      ]
     }
   }
 }

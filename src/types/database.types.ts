@@ -1,4 +1,3 @@
-
 export type Json =
   | string
   | number
@@ -13,48 +12,23 @@ export type Database = {
   __InternalSupabase: {
     PostgrestVersion: "13.0.4"
   }
-  graphql_public: {
-    Tables: {
-      [_ in never]: never
-    }
-    Views: {
-      [_ in never]: never
-    }
-    Functions: {
-      graphql: {
-        Args: {
-          extensions?: Json
-          operationName?: string
-          query?: string
-          variables?: Json
-        }
-        Returns: Json
-      }
-    }
-    Enums: {
-      [_ in never]: never
-    }
-    CompositeTypes: {
-      [_ in never]: never
-    }
-  }
   public: {
     Tables: {
       study_record: {
         Row: {
-          created_at: string
+          created_at: string | null
           id: string
           time: number
           title: string
         }
         Insert: {
-          created_at: string
+          created_at?: string | null
           id?: string
           time: number
           title: string
         }
         Update: {
-          created_at?: string
+          created_at?: string | null
           id?: string
           time?: number
           title?: string
@@ -195,9 +169,6 @@ export type CompositeTypes<
     : never
 
 export const Constants = {
-  graphql_public: {
-    Enums: {},
-  },
   public: {
     Enums: {},
   },

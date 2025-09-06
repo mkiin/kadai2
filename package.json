@@ -7,7 +7,8 @@
     "start": "vite --port 3000",
     "build": "vite build && tsc",
     "serve": "vite preview",
-    "test": "vitest run"
+    "test": "vitest run",
+    "generate-types": "dotenv -e .env -- pnpx supabase gen types typescript --project-id \"$SUPABASE_PROJECT_ID\" > src/types/database.types.ts"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.57.2",
@@ -26,6 +27,7 @@
     "@types/react": "^19.0.8",
     "@types/react-dom": "^19.0.3",
     "@vitejs/plugin-react": "^4.3.4",
+    "dotenv-cli": "^10.0.0",
     "jsdom": "^26.0.0",
     "supabase": "^2.39.2",
     "typescript": "^5.7.2",
