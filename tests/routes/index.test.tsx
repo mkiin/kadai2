@@ -147,7 +147,9 @@ describe("学習記録アプリ", () => {
     expect(screen.getByText("Vitest学習")).toBeInTheDocument();
 
     // 削除ボタンが2つに減っていることを確認
-    const remainingDeleteButtons = screen.getAllByRole("button", { name: "削除" });
+    const remainingDeleteButtons = screen.getAllByRole("button", {
+      name: "削除",
+    });
     expect(remainingDeleteButtons).toHaveLength(2);
   });
 
@@ -170,7 +172,7 @@ describe("学習記録アプリ", () => {
     // フォームの初期値を確認（titleは空、timeは0）
     const titleInput = screen.getByLabelText("学習内容");
     const timeInput = screen.getByLabelText("学習時間（時間）");
-    
+
     expect(titleInput).toHaveValue("");
     expect(timeInput).toHaveValue(0);
 
@@ -201,7 +203,7 @@ describe("学習記録アプリ", () => {
     // 時間も入力して登録を押す
     await user.clear(timeInput);
     await user.type(timeInput, "2");
-    
+
     // 成功時の戻り値を設定
     vi.mocked(createRecords).mockResolvedValue({
       id: "test-id",
