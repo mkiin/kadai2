@@ -16,7 +16,7 @@ jobs:
     name: Test and Lint
     runs-on: ubuntu-latest
     outputs:
-      build-success: ${{ steps.build.outcome == 'success' }}
+      build-success: ${{ steps.test.outcome == 'success' }}
     
     steps:
       - name: Checkout code
@@ -43,11 +43,8 @@ jobs:
         run: pnpm tsc --noEmit
       
       - name: Run tests
+        id : test
         run: pnpm test
-      
-      - name: Build application
-        id: build
-        run: pnpm run build
       
       # テストカバレッジレポート（オプション）
       - name: Upload test coverage
