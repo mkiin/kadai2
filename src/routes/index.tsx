@@ -88,20 +88,20 @@ function App() {
         {loading.fetch ? (
           <div className='mt-6 space-y-3 bg-white border rounded-lg p-4'>
             <div className="flex items-center justify-center py-8">
-              <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-bulue-600 mr-3"></div>
+              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-bulue-600 mr-3"/>
               <span className='text-gray-600'>読込中...</span>
             </div>
           </div>
         ) : (
           <div className="mt-6 space-y-3 bg-white border rounded-lg p-4">
           {records.length === 0 ? (
-            <div className="text-gray-500 text-center">まだ学習記録がありません</div>
+            <div className="text-gray-500 text-center border-3">まだ学習記録がありません</div>
           ) : (
             records.map((record) => (
               <div key={`${record.title}-${record.time}`} className="flex items-center space-x-1.5">
-                <h3 className="font-medium">{record.title}</h3>
-                <p className="text-gray-600">{record.time}時間</p>
-                <button type="submit" className='bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700' onClick={() => onDelete(record.id)} disabled={loading.submit} >削除</button>
+                <h3 className="border-1 font-medium">{record.title}</h3>
+                <p className="text-gray-600 border-1">{record.time}時間</p>
+                <button type="submit" className='bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700 border-1' onClick={() => onDelete(record.id)} disabled={loading.submit} >削除</button>
               </div>
             ))
           )}
