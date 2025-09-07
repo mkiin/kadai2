@@ -1,15 +1,10 @@
-import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import type { Tables } from "@/types/database.types";
 import { createRecords, deleteRecords, getRecords } from "../api/querys";
 
 type RecordType = Tables<"study_record">;
 
-export const Route = createFileRoute("/")({
-  component: App,
-});
-
-function App() {
+export function LearningApp() {
   // フォームの状態管理
   const [formData, setFormData] = useState({ title: "", time: 0 });
   // レコードの状態管理
@@ -157,7 +152,7 @@ function App() {
               onChange={(e) =>
                 setFormData((prev) => ({
                   ...prev,
-                  time: parseInt(e.target.value, 10),
+                  time: parseInt(e.target.value), // TODO(human)
                 }))
               }
             />
