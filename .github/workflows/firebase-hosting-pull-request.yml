@@ -1,22 +1,19 @@
-name: Deploy to Firebase Hosting
+name: Deploy PR Preview to Firebase Hosting
+
 on:
-  push:
-    branches: [main]
-  workflow_dispatch:  # 手動実行を有効化
+  pull_request:
+    types: [opened, synchronize, reopened]
 
 jobs:
-  # CIワークフローを呼び出す
-  ci:
-    uses: ./.github/workflows/ci.yml
-    
-  # CIが成功した場合のみデプロイ
-  deploy:
-    needs: ci
-    if: needs.ci.outputs.build-success == 'true'
+  # CIワークフローはpull_requestイベントで自動実行されるため、
+  # ここではプレビューデプロイのみ行う
+  preview:
+    if: github.event.pull_request.head.repo.full_name == github.repository
     runs-on: ubuntu-latest
     
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout code
+        uses: actions/checkout@v4
       
       - name: Setup pnpm
         uses: pnpm/action-setup@v4
@@ -37,13 +34,13 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
       
-      - name: Build for production
+      - name: Build application
         run: pnpm run build
       
-      - name: Deploy to Firebase
+      - name: Deploy Preview to Firebase
         uses: FirebaseExtended/action-hosting-deploy@v0
         with:
           repoToken: ${{ secrets.GITHUB_TOKEN }}
           firebaseServiceAccount: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_JISOU_PROJECT }}
-          channelId: live
           projectId: jisou-project
+          expires: 7d

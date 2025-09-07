@@ -31,6 +31,6 @@ export const mockNewRecord: Omit<RecordType, "id" | "created_at"> = {
 export const mockCreatedRecord: RecordType = {
   id: "4",
   title: "新しい学習",
-  time: 1,
+  time: 4,
   created_at: "2025-01-03T10:00:00Z"
 }

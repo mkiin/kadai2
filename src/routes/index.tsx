@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useEffect, useState } from "react";
+import { useEffect, useId, useState } from "react";
 import type { Tables } from "@/types/database.types";
 import { createRecords, deleteRecords, getRecords } from "../api/querys";
 
@@ -9,7 +9,7 @@ export const Route = createFileRoute("/")({
   component: App,
 });
 
-function App() {
+export function App() {
   // フォームの状態管理
   const [formData, setFormData] = useState({ title: "", time: 0 });
   // レコードの状態管理
@@ -21,6 +21,10 @@ function App() {
   // エラー状態の管理
   const [error, setError] = useState<string>("");
 
+  // Generate unique IDs for form inputs
+  const titleInputId = useId();
+  const timeInputId = useId();
+
   // 学習時間の合計値
   const sum = records.reduce((accumulator, currentValue) => {
     return accumulator + currentValue.time;
@@ -29,9 +33,11 @@ function App() {
   // レコードに学習記録を追加する
   const onCreate = async () => {
     if (formData.title === "" || formData.time <= 0) {
+      setError("学習内容と学習時間を入力してください");
       return;
     }
 
+    setError(""); // エラーをクリア
     setLoading((prev) => ({ ...prev, submit: true }));
 
     const result = await createRecords(formData);
@@ -129,10 +135,14 @@ function App() {
         <div className="mt-6 bg-white border rounded-lg p-6">
           {/* 学習内容入力 */}
           <div className="mb-4">
-            <label htmlFor="title" className="block text-sm font-medium mb-1">
+            <label
+              htmlFor={titleInputId}
+              className="block text-sm font-medium mb-1"
+            >
               学習内容
             </label>
             <input
+              id={titleInputId}
               type="text"
               className="border rounded px-3 py-1 w-full"
               value={formData.title}
@@ -147,10 +157,14 @@ function App() {
 
           {/* 学習時間入力 */}
           <div className="mb-4">
-            <label htmlFor="title" className="block text-sm font-medium mb-1">
+            <label
+              htmlFor={timeInputId}
+              className="block text-sm font-medium mb-1"
+            >
               学習時間（時間）
             </label>
             <input
+              id={timeInputId}
               type="number"
               className="border rounded px-3 py-1 w-full"
               value={formData.time}
