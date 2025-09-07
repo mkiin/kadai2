@@ -4,7 +4,6 @@ import {
   createRootRoute,
   createRoute,
   createRouter,
-  Outlet,
   type RouteComponent,
   RouterProvider,
 } from "@tanstack/react-router";
