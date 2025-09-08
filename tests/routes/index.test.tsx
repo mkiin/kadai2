@@ -50,10 +50,7 @@ describe("学習記録アプリ", () => {
     // モック関数の戻り値を設定（空の配列）
     vi.mocked(getRecords).mockResolvedValue([]);
 
-    const { router } = createTestRouter();
-    await router.load();
-
-    render(<RouterProvider router={router} />);
+    render(<App />);
 
     expect(await screen.findByText("学習記録一覧")).toBeInTheDocument();
   });
@@ -93,7 +90,9 @@ describe("学習記録アプリ", () => {
     // 新しい記録が表示されることを確認
     await waitFor(() => {
       expect(screen.getByText("新しい学習")).toBeInTheDocument();
-      expect(screen.getByText("4時間")).toBeInTheDocument();
+      // 複数の「4時間」が表示される可能性があるので、getAllByTextを使用
+      const timeElements = screen.getAllByText("4時間");
+      expect(timeElements.length).toBeGreaterThan(0);
     });
 
     // 「まだ学習記録がありません」が表示されなくなることを確認
