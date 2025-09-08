@@ -91,9 +91,7 @@ export function App() {
       <div className="w-full max-w-4xl">
         {/* ヘッダー部 */}
         <div className="mb-8">
-          <h1 className="text-3xl font-bold text-gray-900">
-            学習記録一覧
-          </h1>
+          <h1 className="text-3xl font-bold text-gray-900">学習記録一覧</h1>
         </div>
 
         {/* 記録一覧部分 */}
@@ -118,7 +116,9 @@ export function App() {
                     className="flex items-center justify-between p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors"
                   >
                     <div className="flex items-center space-x-4">
-                      <h3 className="font-medium text-gray-900">{record.title}</h3>
+                      <h3 className="font-medium text-gray-900">
+                        {record.title}
+                      </h3>
                       <p className="text-gray-600">{record.time}時間</p>
                     </div>
                     <button
@@ -138,7 +138,7 @@ export function App() {
         {/* form 部分 */}
         <div className="mt-6 bg-white shadow rounded-lg p-6">
           <h2 className="text-lg font-semibold mb-4 text-gray-900">新規登録</h2>
-          
+
           {/* 学習内容入力 */}
           <div className="mb-4">
             <label
@@ -187,13 +187,20 @@ export function App() {
           <div className="bg-gray-50 p-4 rounded-md text-sm mb-4">
             <div className="space-y-1">
               <p className="text-gray-600">
-                現在の入力: <span className="font-medium text-gray-900">{formData.title || "未入力"}</span>
+                現在の入力:{" "}
+                <span className="font-medium text-gray-900">
+                  {formData.title || "未入力"}
+                </span>
               </p>
               <p className="text-gray-600">
-                学習時間: <span className="font-medium text-gray-900">{formData.time}時間</span>
+                学習時間:{" "}
+                <span className="font-medium text-gray-900">
+                  {formData.time}時間
+                </span>
               </p>
               <p className="text-gray-600">
-                合計学習時間: <span className="font-medium text-gray-900">{sum}時間</span>
+                合計学習時間:{" "}
+                <span className="font-medium text-gray-900">{sum}時間</span>
               </p>
             </div>
           </div>
@@ -208,7 +215,7 @@ export function App() {
             {loading.submit ? "登録中..." : "登録"}
           </button>
         </div>
-        
+
         {/* エラーメッセージ */}
         {error && (
           <div className="mt-4 p-4 bg-red-50 border border-red-200 rounded-md">
