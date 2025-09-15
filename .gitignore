@@ -49,10 +49,10 @@ count.txt
 
 
 # serena
-.serena/
+.serena
 
 # firebase
-.firebase/
+.firebase
 
 # claude code
-.claude/
+.claude
