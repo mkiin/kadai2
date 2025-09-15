@@ -28,7 +28,7 @@ jobs:
         run: pnpm install --frozen-lockfile
       
       - name: Run linter
-        run: pnpm biome check --write src/
+        run: pnpm run lint:fix
       
       - name: Run type check
         run: pnpm tsc --noEmit
